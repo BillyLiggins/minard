@@ -21,6 +21,7 @@ import detector_state
 import pcadb
 import ecadb
 import nlrat
+import css
 import noisedb
 from .channeldb import ChannelStatusForm, upload_channel_status, get_channels, get_channel_status, get_channel_status_form, get_channel_history, get_pmt_info, get_nominal_settings
 import re
@@ -432,6 +433,14 @@ def nhit():
 @app.route('/rat')
 def rathome():
     return render_template('rathome.html', runs=nlrat.available_runs())
+
+@app.route('/css')
+def csshome():
+    return render_template('csshome.html')
+
+@app.route('/css/<int:chan>')
+def cssChannel(chan):
+    return render_template('csschan.html', results = css.Data(chan))
 
 @app.route('/rat/<int:run>')
 def ratrun(run = 0):
