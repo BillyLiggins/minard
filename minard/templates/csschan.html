@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block title %}CSS{% endblock %}
+{% block head %}
+    <!-- metrics-graphics stylesheet goes above super() because we want bootstrap's style
+    (which is linked in super()) to override it. -->
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/metricsgraphics.css') }}">
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/mg_line_brushing.css') }}">
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    {{ super() }}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <center>
+                    <ul class="pager">
+                        <li class="previous"><a href="{{ url_for('cssChannel', chan= results.chan-1 ) }}">Prev</a></li>
+                        <li><h2 style="display:inline"> Channel {{ results.chan }} </h2></li>
+                        <li class="next"><a href="{{ url_for('cssChannel', chan= results.chan+1 ) }}">Next</a></li>
+                    </ul>
+                    <h4> {{ results.chan }} </h4>
+                    <h4> {{ results.chan }} </h4>
+                </center>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+	{% if error %}
+	<div class="alert alert-danger" role="alert">
+	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+	Error: {{ error }}
+	</div>
+	{% else %}
+	<div class="row">
+	    <div class="col-md-12" id='PGThits'></div>
+        </div>
+	<div class="row">
+	    <div class="col-md-12" id='nhit-100-med'></div>
+        </div>
+	<div class="row">
+	    <div class="col-md-12" id='nhit-100-hi'></div>
+        </div>
+	<div class="row">
+	    <div class="col-md-12" id='nhit-20'></div>
+        </div>
+	<div class="row">
+	    <div class="col-md-12" id='nhit-20-lb'></div>
+        </div>
+	{% endif %}
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/metricsgraphics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mg_line_brushing.js') }}"></script>
+
+    <script>
+        var nhit_100_lo = {{   results.data | tojson }};
+
+        var nhit_100_lo_data = new Array();
+        for (var i=0; i < nhit_100_lo.length; i++) {
+            nhit_100_lo_data.push({'x': i, 'y': nhit_100_lo[i]});
+        }
+
+        MG.data_graphic({
+            title: "PGT hits",
+            description: "PGT on channel",
+            data: nhit_100_lo_data,
+            chart_type: 'point',
+            width: $('#PGThits').width(),
+            height: 250,
+            left: 100,
+            target: '#PGThits',
+            x_accessor: 'x',
+            y_accessor: 'y',
+            x_label: 'run',
+            y_label: 'PGThits'
+        });
+    </script>
+{% endblock %}
