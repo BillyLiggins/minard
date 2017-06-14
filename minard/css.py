@@ -28,22 +28,17 @@ class Data:
         :param str time:
         '''
         self.chan = chan_
-        self.data = getChannelPGT(chan_)
-
+        self.highOcc = getChannelData("highOcc",chan_)
+        self.highOcc_Error = getChannelData("highOcc_Error",chan_)
+        self.runs = getRunRange()
+        #
     
-def getChannelPGT(chan_):
-    """TODO: Docstring for getChannelPGT.
 
-    :chan_: TODO
-    :returns: TODO
+def getRunRange():
+    return redis.lrange('run_number',-10,-1)
 
-    """
-    # dat= data()
-    # dat.data=redis.lrange('PGThits_{}'.format(chan_),0,-1)
-    # dat.chan_=chan_
-    return redis.lrange('PGThits_{}'.format(chan_),0,-1)
-    # return dat
-    # return redis.lrange('PGThits_2222',0,5)
+def getChannelData(varible_, chan_):
+    return redis.lrange('{}_{}'.format(varible_,chan_),-10,-1)
 
 def extract_run_type(run_word):
     '''Get the run type from the run word using RUN_TYPES

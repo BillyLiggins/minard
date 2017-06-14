@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/metricsgraphics.css') }}">
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/mg_line_brushing.css') }}">
     {{ super() }}
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
 {% block body %}
     {{ super() }}
@@ -35,22 +34,16 @@
 	</div>
 	{% else %}
 	<div class="row">
-            <div class="col-md-12",id="myDiv" style="width: 480px; height: 400px;"></div>
+	    <div class="col-md-12" id='highOcc'></div>
         </div>
 	<div class="row">
-	    <div class="col-md-12" id='PGThits'></div>
+	    <div class="col-md-12" id='highOcc_1'></div>
         </div>
 	<div class="row">
-	    <div class="col-md-12" id='nhit-100-med'></div>
-        </div>
-	<div class="row">
-	    <div class="col-md-12" id='nhit-100-hi'></div>
-        </div>
-	<div class="row">
-	    <div class="col-md-12" id='nhit-20'></div>
-        </div>
-	<div class="row">
-	    <div class="col-md-12" id='nhit-20-lb'></div>
+            {# <div class="col-md-12" id="myDiv"></div> #}
+            <div class = "col-md-12">
+                <div id="myDiv"></div>
+            </div>
         </div>
 	{% endif %}
     </div>
@@ -59,31 +52,60 @@
     <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
     <script src="{{ url_for('static', filename='js/metricsgraphics.js') }}"></script>
     <script src="{{ url_for('static', filename='js/mg_line_brushing.js') }}"></script>
+    <script src="{{ url_for('static', filename='plotly/plotly-latest.min.js') }}"></script>
 
     <script>
-        var nhit_100_lo = {{   results.data | tojson }};
 
-        var nhit_100_lo_data = new Array();
-        for (var i=0; i < nhit_100_lo.length; i++) {
-            nhit_100_lo_data.push({'x': i, 'y': nhit_100_lo[i]});
+        var runs= {{  results.runs | tojson }};
+        var highOcc = {{  results.highOcc | tojson }};
+        var highOccError= {{  results.highOcc_Error | tojson }};
+
+        if( runs.length != highOcc.length){
+            console.log("array lengths are different");
         }
 
+        var dataFrame= new Array();
+        for (var i=0; i <runs.length; i++) {
+            dataFrame.push({'runs': runs[i],
+                            'highOcc': highOcc[i],
+                            'highOccError': highOccError[i]
+                            {# 'highOccError': highOccError[i] #}
+            });
+        }
+
+        
+
         MG.data_graphic({
-            title: "PGT hits",
-            description: "PGT on channel",
-            data: nhit_100_lo_data,
+            title: "High Occupancy",
+            description: "High Occupancy on channel",
+            data: dataFrame,
             chart_type: 'point',
-            width: $('#PGThits').width(),
+            width: $('#highOcc').width(),
             height: 250,
             left: 100,
-            target: '#PGThits',
-            x_accessor: 'x',
-            y_accessor: 'y',
+            target: '#highOcc',
+            x_accessor: 'runs',
+            y_accessor: 'highOcc',
             x_label: 'run',
-            y_label: 'PGThits'
+            y_label: 'highOcc'
+            {# ,x_rug: true #}
         });
-    </script>
-    <script>
+
+        MG.data_graphic({
+            title: "High Occupancy",
+            description: "High Occupancy on channel",
+            data: dataFrame,
+            {# least_squares: true, #}
+            chart_type: 'point',
+            width: 0.90*$('#highOcc_1').width(),
+            height:200,
+            left: 100,
+            target: '#highOcc_1',
+            x_accessor: 'runs',
+            y_accessor: 'highOcc',
+            x_label: 'run',
+            y_label: 'High Occ'
+        });
 
         var data = [
             {
@@ -98,5 +120,6 @@
             }
         ];
         Plotly.newPlot('myDiv', data);
+
     </script>
 {% endblock %}
