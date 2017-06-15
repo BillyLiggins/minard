@@ -440,7 +440,11 @@ def csshome():
 
 @app.route('/css/<int:chan>')
 def cssChannel(chan):
-    return render_template('csschan.html', results = css.Data(chan))
+    # if not request.args.get('lookback'):
+    #     return redirect(url_for('cssChannel',chan=chan,lookback=10))
+    lookback = request.args.get('lookback',10,type=int)
+    # print lookback
+    return render_template('csschan.html', results = css.Data(chan,lookback))
 
 @app.route('/rat/<int:run>')
 def ratrun(run = 0):

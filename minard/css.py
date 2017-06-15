@@ -22,23 +22,23 @@ RUN_TYPES = {
 class Data:
     '''Class to hold css info
     '''
-    def __init__(self,chan_):
+    def __init__(self,chan_,lookback_):
         '''
         :param int id:
         :param str time:
         '''
         self.chan = chan_
-        self.highOcc = getChannelData("highOcc",chan_)
-        self.highOcc_Error = getChannelData("highOcc_Error",chan_)
-        self.runs = getRunRange()
-        #
+        self.lookback = lookback_
+        self.highOcc = getChannelData("highOcc",chan_,lookback_)
+        self.highOcc_Error = getChannelData("highOcc_Error",chan_,lookback_)
+        self.runs = getRunRange(lookback_)
     
 
-def getRunRange():
-    return redis.lrange('run_number',-10,-1)
+def getRunRange(lookback_):
+    return redis.lrange('run_number',-lookback_,-1)
 
-def getChannelData(varible_, chan_):
-    return redis.lrange('{}_{}'.format(varible_,chan_),-10,-1)
+def getChannelData(varible_, chan_,lookback_):
+    return redis.lrange('{}_{}'.format(varible_,chan_),-lookback_,-1)
 
 def extract_run_type(run_word):
     '''Get the run type from the run word using RUN_TYPES
