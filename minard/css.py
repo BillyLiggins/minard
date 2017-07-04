@@ -29,15 +29,21 @@ class Data:
         '''
         self.chan = chan_
         self.lookback = lookback_
+        self.chs_status = getChannelData("chs_status",chan_,lookback_)
+        print "current_chs_status = ",self.chs_status[-1]
+        print "current_chs_status = ",int(self.chs_status[-1])>0
+        self.current_chs_status =  int(self.chs_status[-1]) > 0 
         self.highOcc = getChannelData("highOcc",chan_,lookback_)
         self.highOcc_Error = getChannelData("highOcc_Error",chan_,lookback_)
         self.runs = getRunRange(lookback_)
-    
+         
+
 
 def getRunRange(lookback_):
     return redis.lrange('run_number',-lookback_,-1)
 
 def getChannelData(varible_, chan_,lookback_):
+    print '{}_{}'.format(varible_,chan_)
     return redis.lrange('{}_{}'.format(varible_,chan_),-lookback_,-1)
 
 def extract_run_type(run_word):

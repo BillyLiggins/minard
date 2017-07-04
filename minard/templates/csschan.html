@@ -78,127 +78,142 @@
     </div>
 
     <div class="container">
-	{% if error %}
-	<div class="alert alert-danger" role="alert">
-	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-	Error: {{ error }}
-	</div>
-	{% else %}
-	<div class="row">
-	    <div class="col-md-6" id='highOcc'></div>
-	    <div class="col-md-6" id='highOcc_1'></div>
-        </div>
-	<div class="row">
-            {# <div class="col-md-12" id="myDiv"></div> #}
-            <div class = "col-md-12">
-                <div id="myDiv"></div>
+        {% if results.current_chs_status %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                Error: "channel failed channel hardware status check" {{ results.current_chs_status }}
             </div>
-        </div>
+	{% else %}
+            <div class="row">
+                <div class="col-md-6" id='highOcc'></div>
+                <div class="col-md-6" id='highOcc_1'></div>
+            </div>
+            <div class="row">
+                <div class = "col-md-12">
+                    <div id="myDiv"></div>
+                </div>
+            </div>
 	{% endif %}
     </div>
+
 {% endblock %}
+
 {% block script %}
-    <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/metricsgraphics.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/mg_line_brushing.js') }}"></script>
-    <script src="{{ url_for('static', filename='plotly/plotly-latest.min.js') }}"></script>
+        {% if not results.current_chs_status %}
+            <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/metricsgraphics.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/mg_line_brushing.js') }}"></script>
+            <script src="{{ url_for('static', filename='plotly/plotly-latest.min.js') }}"></script>
 
-    <script>
+            <script>
 
-        var runs= {{  results.runs | tojson }};
-        var highOcc = {{  results.highOcc | tojson }};
-        var highOccError= {{  results.highOcc_Error | tojson }};
+                var runs= {{  results.runs | tojson }};
+                var highOcc = {{  results.highOcc | tojson }};
+                var highOccError= {{  results.highOcc_Error | tojson }};
 
-        if( runs.length != highOcc.length){
-            console.log("array lengths are different");
-        }
+                if( runs.length != highOcc.length){
+                    console.log("array lengths are different");
+                }
 
-        var dataFrame= new Array();
-        for (var i=0; i <runs.length; i++) {
-            dataFrame.push({'runs': runs[i],
-                            'highOcc': highOcc[i],
-                            'highOccError_high': highOcc[i]+highOccError[i],
-                            'highOccError_low': highOcc[i]-highOccError[i]
-                {# 'highOccError': highOccError[i] #}
-            });
-        }
-
-        
-
-        MG.data_graphic({
-            title: "High Occupancy",
-            description: "High Occupancy on channel",
-            data: dataFrame,
-            chart_type: 'point',
-            width: $('#highOcc').width(),
-            height: 250,
-            left: 100,
-            target: '#highOcc',
-            x_accessor: 'runs',
-            y_accessor: 'highOcc',
-            x_label: 'run',
-            y_label: 'highOcc'
-            {# ,x_rug: true #}
-        });
-
-        MG.data_graphic({
-            title: "High Occupancy",
-            description: "High Occupancy on channel",
-            data: dataFrame,
-            least_squares: true,
-            chart_type: 'point',
-            width:$('#highOcc_1').width(),
-            height:250,
-            left: 100,
-            target: '#highOcc_1',
-            x_accessor: 'runs',
-            y_accessor: 'highOcc',
-            x_label: 'run',
-            y_label: 'High Occ',
-            {# show_confidence_band: ['highOccError_low', 'highOccError_high'], #}
-        });
-
-        window.onload = function(){
-            var arr = window.location.href.split("/");
-            var currentLCN =arr[arr.length-1];
-
-            var crate = parseInt((currentLCN-currentLCN%18)/512);
-            var leftover = (currentLCN-512*crate)
-            var slot = parseInt((leftover-leftover%16)/32);
-            var channel= (currentLCN-32*slot-512*crate);
-
-            document.getElementById("crate").value = crate;
-            document.getElementById("slot").value = slot;
-            document.getElementById("channel").value = channel;
-        }
+                var dataFrame= new Array();
+                for (var i=0; i <runs.length; i++) {
+                    dataFrame.push({'runs': runs[i],
+                        'highOcc': highOcc[i],
+                        'highOccError_high': highOcc[i]+highOccError[i],
+                        'highOccError_low': highOcc[i]-highOccError[i]
+                        {# 'highOccError': highOccError[i] #}
+                    });
+                }
 
 
-        $("#crate, #slot, #channel").on("change", function() {
-            var params = {};
-            if (document.getElementById("crate").value != -1) {
-                var crate = parseInt(document.getElementById("crate").value);
-            }
-            if (document.getElementById("slot").value != -1) {
-                var slot = parseInt(document.getElementById("slot").value);
-            }
-            if (document.getElementById("channel").value != -1) {
-                var channel = parseInt(document.getElementById("channel").value);
-            }
 
-            var change = document.getElementById("crate").value != -1 &&
-                         document.getElementById("slot").value != -1 &&
-                         document.getElementById("channel").value != -1;
-            if (change) {
-                window.location.replace($SCRIPT_ROOT + "/css/" + (512*crate+32*slot+channel));
-            } 
-        });
+                MG.data_graphic({
+                    title: "High Occupancy",
+                    description: "High Occupancy on channel",
+                    data: dataFrame,
+                    chart_type: 'point',
+                    width: $('#highOcc').width(),
+                    height: 250,
+                    left: 100,
+                    target: '#highOcc',
+                    x_accessor: 'runs',
+                    y_accessor: 'highOcc',
+                    x_label: 'run',
+                    y_label: 'highOcc'
+                    {# ,x_rug: true #}
+                });
 
-        $("#limit").on("change", function() {
-            document.getElementById("limit").value =this.value;
-            {# alert(window.location.href.split("?")[0]) #}
-            window.location.assign(window.location.href.split("?")[0]+"?lookback=" + this.value );
-            {# window.location.reload(); #}
-        });
+                MG.data_graphic({
+                    title: "High Occupancy",
+                    description: "High Occupancy on channel",
+                    data: dataFrame,
+                    least_squares: true,
+                    chart_type: 'point',
+                    width:$('#highOcc_1').width(),
+                    height:250,
+                    left: 100,
+                    target: '#highOcc_1',
+                    x_accessor: 'runs',
+                    y_accessor: 'highOcc',
+                    x_label: 'run',
+                    y_label: 'High Occ',
+                    {# show_confidence_band: ['highOccError_low', 'highOccError_high'], #}
+                });
 
-    </script>
+                window.onload = function(){
+                    var arr = window.location.href.split("/");
+                    var currentLCN =arr[arr.length-1];
+
+                    var crate = parseInt((currentLCN-currentLCN%18)/512);
+                    var leftover = (currentLCN-512*crate)
+                    var slot = parseInt((leftover-leftover%16)/32);
+                    var channel= (currentLCN-32*slot-512*crate);
+
+                    document.getElementById("crate").value = crate;
+                    document.getElementById("slot").value = slot;
+                    document.getElementById("channel").value = channel;
+                }
+
+
+                $("#crate, #slot, #channel").on("change", function() {
+                    var params = {};
+                    if (document.getElementById("crate").value != -1) {
+                        var crate = parseInt(document.getElementById("crate").value);
+                    }
+                    if (document.getElementById("slot").value != -1) {
+                        var slot = parseInt(document.getElementById("slot").value);
+                    }
+                    if (document.getElementById("channel").value != -1) {
+                        var channel = parseInt(document.getElementById("channel").value);
+                    }
+
+                    var change = document.getElementById("crate").value != -1 &&
+                        document.getElementById("slot").value != -1 &&
+                        document.getElementById("channel").value != -1;
+                    if (change) {
+                        window.location.replace($SCRIPT_ROOT + "/css/" + (512*crate+32*slot+channel));
+                    } 
+                });
+
+                $("#limit").on("change", function() {
+                    document.getElementById("limit").value =this.value;
+                    {# alert(window.location.href.split("?")[0]) #}
+                    window.location.assign(window.location.href.split("?")[0]+"?lookback=" + this.value );
+                    {# window.location.reload(); #}
+                    var arr = window.location.href.split("/");
+                    var currentLCN =arr[arr.length-1];
+
+                    var crate = parseInt((currentLCN-currentLCN%18)/512);
+                    var leftover = (currentLCN-512*crate)
+                    var slot = parseInt((leftover-leftover%16)/32);
+                    var channel= (currentLCN-32*slot-512*crate);
+
+                    document.getElementById("crate").value = crate;
+                    document.getElementById("slot").value = slot;
+                    document.getElementById("channel").value = channel;
+                });
+
+                </script>
+	{% else %}
+	{% endif %}
 {% endblock %}
