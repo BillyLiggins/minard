@@ -35,10 +35,10 @@ class Data:
     
 
 def getRunRange(lookback_):
-    return redis.lrange('run_number',-lookback_,-1)
+    return redis.lrange('CSS_NEARLINE_run_number',-lookback_,-1)
 
 def getChannelData(varible_, chan_,lookback_):
-    return redis.lrange('{}_{}'.format(varible_,chan_),-lookback_,-1)
+    return redis.lrange('CSS_NEARLINE_{}_{}'.format(varible_,chan_),-lookback_,-1)
 
 def extract_run_type(run_word):
     '''Get the run type from the run word using RUN_TYPES
