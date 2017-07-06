@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/metricsgraphics.css') }}">
     <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/mg_line_brushing.css') }}">
     {{ super() }}
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='css/css.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 {% block body %}
     {{ super() }}
@@ -84,10 +86,10 @@
                 Error: "channel failed channel hardware status check" {{ results.current_chs_status }}
             </div>
 	{% else %}
-            <div class="row">
-                <div class="col-md-6" id='highOcc'></div>
-                <div class="col-md-6" id='highOcc_1'></div>
-            </div>
+        <div>  <h1>High Occupancy</h1>
+        <div class="popup" onclick="myFunction()">    <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <span class="popuptext" id="myPopup">highOcc = The fraction of PGT events the channel is involved in over the run. </span>
+        </div></div>
             <div class="row">
                 <div class = "col-md-6">
                     <div id="hist"></div>
@@ -107,6 +109,7 @@
             <script src="{{ url_for('static', filename='js/metricsgraphics.js') }}"></script>
             <script src="{{ url_for('static', filename='js/mg_line_brushing.js') }}"></script>
             <script src="{{ url_for('static', filename='plotly/plotly-latest.min.js') }}"></script>
+            {# <script type="text/javascript", src="https://example.com/MathJax.js?config=TeX-AMS_HTML"></script> #}
 
             <script>
 
@@ -117,34 +120,6 @@
                 if( runs.length != highOcc.length){
                     console.log("array lengths are different");
                 }
-
-                var dataFrame= new Array();
-                for (var i=0; i <runs.length; i++) {
-                    dataFrame.push({'runs': runs[i],
-                        'highOcc': highOcc[i],
-                        'highOccError_high': highOcc[i]+highOccError[i],
-                        'highOccError_low': highOcc[i]-highOccError[i]
-                    });
-                }
-
-
-                MG.data_graphic({
-                    title: "High Occupancy",
-                    description: "High Occupancy on channel",
-                    data: dataFrame,
-                    chart_type: 'point',
-                    width: $('#highOcc').width(),
-                    height: 250,
-                    left: 100,
-                    target: '#highOcc',
-                    x_accessor: 'runs',
-                    y_accessor: 'highOcc',
-                    x_label: 'run',
-                    y_label: 'highOcc'
-                    {# ,x_rug: true #}
-                });
-
-                {# alert(runs); #}
 
                 var data = [
                     {
@@ -184,24 +159,16 @@
                         },
                     }
                 ];
-                Plotly.newPlot('hist',binnedData);
-
-                {# MG.data_graphic({ #}
-                {#     title: "High Occupancy", #}
-                {#     description: "High Occupancy on channel", #}
-                {#     data: dataFrame, #}
-                {#     least_squares: true, #}
-                {#     chart_type: 'point', #}
-                {#     width:$('#highOcc_1').width(), #}
-                {#     height:250, #}
-                {#     left: 100, #}
-                {#     target: '#highOcc_1', #}
-                {#     x_accessor: 'runs', #}
-                {#     y_accessor: 'highOcc', #}
-                {#     x_label: 'run', #}
-                {#     y_label: 'High Occ', #}
-                {#     show_confidence_band: ['highOccError_low', 'highOccError_high'], #}
-                {# }); #}
+                var layout = {
+                    xaxis: {
+                        title: "High Occ"
+                    },
+                    yaxis: {
+                        title: "Run Number"
+                    },
+                    title:'High Occ values taken'
+                };
+                Plotly.newPlot('hist',binnedData,layout);
 
                 window.onload = function(){
                     var arr = window.location.href.split("/");
@@ -256,6 +223,11 @@
                     document.getElementById("channel").value = channel;
                 });
 
+                // When the user clicks on <div>, open the popup
+                function myFunction() {
+                    var popup = document.getElementById("myPopup");
+                    popup.classList.toggle("show");
+                }
                 </script>
 	{% else %}
 	{% endif %}

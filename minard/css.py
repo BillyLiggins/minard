@@ -21,11 +21,24 @@ RUN_TYPES = {
 
 class Summary:
     """docstring for Summary"""
-    def __init__(self):
+    def __init__(self,lookback_):
         self.topChiSqChan =GetChiSqChans()
         self.topChiSqValues = GetChiSqValues()
         self.topGradChan = GetGradChans()
         self.topGradValues = GetGradValues()
+        self.runs = getRunRange(lookback_)
+        self.ChiHighOcc={}
+        self.ChiHighOcc_Error={}
+        for ChiChan in self.topChiSqChan:
+            self.ChiHighOcc[ChiChan]= []
+            self.ChiHighOcc[ChiChan] = getChannelData("highOcc",ChiChan,lookback_)
+            self.ChiHighOcc_Error[ChiChan] = getChannelData("highOcc_Error",ChiChan,lookback_)
+        self.GradHighOcc={}
+        self.GradHighOcc_Error={}
+        for GradChan in self.topGradChan:
+            self.GradHighOcc[GradChan]= []
+            self.GradHighOcc[GradChan] = getChannelData("highOcc",GradChan,lookback_)
+            self.GradHighOcc_Error[GradChan] = getChannelData("highOcc_Error",GradChan,lookback_)
         
 
 class Data:
@@ -53,7 +66,6 @@ def getRunRange(lookback_):
 
 def getChannelData(varible_, chan_,lookback_):
     return redis.lrange('CSS_NEARLINE_{}_{}'.format(varible_,chan_),-lookback_,-1)
-
 
 def GetChiSqChans():
     return redis.lrange('CSS_NEARLINE_ChiSquaredChannelRejected',0,-1)

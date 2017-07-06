@@ -7,28 +7,8 @@
 {% endblock %}
 {% block body %}
 {{ super() }}
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Run #</th>
-                    <th>Run Type</th>
-                    <th>Start Time</th>
-                </tr>
-                </thead>
-                {% for run in runs %}
-                <tr>
-                    <th> <a href = "{{ url_for('ratrun', run=run.id) }}"> {{run.id}} </a> </th>
-                    <th> {{run.type}} </th>
-                    <th> {{run.time}} </th>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
-</div>
+
+<h1>CSS Landing Page</h1>
 
 <div class="container">
     {% if results.current_chs_status %}
@@ -50,7 +30,8 @@
     {% endif %}
 </div>
 <div class="col-md-6">
-    <table id="chiTable" class="table table-hover text-center">
+    {# <table id="chiTable" class="table table-hover text-center"> #}
+    <table id="chiTable" class="table table-hover">
         <thead>
             <tr>
                 <th>Channel</th>
@@ -62,6 +43,7 @@
             <tr>
                 <td id=\"chiSq_{{i}}\"><a href="{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}">{{results.topChiSqChan[i]}}</a></td>
                 <td id=\"chiSqVal_{{i}}\"><a href="{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}">{{results.topChiSqValues[i]}}</a></td>
+                <td><a href="{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}"><div id="chiSqGraph_{{results.topChiSqChan[i]}}"></div></a></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -96,10 +78,39 @@
 
             <script>
                 
-                {# {% for i in range( results.topChiSqChan|length ) %} #}
-                {#     document.getElementById("chiSq_{{i|string}}").outerHTML =  "<td id=\"chiSq_{{i}}\"><a href=\"{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}\">{{results.topChiSqChan[results.topChiSqChan|length-1 - i]}}</a></td>"; #}
-                {#  #}
-                {# {% endfor %} #}
+            var runs= {{  results.runs | tojson }};
+            {%for i in results.ChiHighOcc %}
+                var ChiHighOcc = {{  results.ChiHighOcc[i] | tojson }};
+                var ChiHighOcc_Error= {{  results.ChiHighOcc_Error[i] | tojson }};
+
+                {# if( runs.length != highOcc.length){ #}
+                {#     console.log("array lengths are different"); #}
+                {# } #}
+
+                var data = [
+                    {
+                        x: runs,
+                        y: ChiHighOcc,
+                        error_y: {
+                            type: 'data',
+                            array:ChiHighOcc_Error,
+                            visible: true,
+                            thickness: 0.5,
+                            width:0
+                        },
+                        mode: 'markers',
+                        type: 'scatter'
+                    }
+                ];
+
+                var layout = {
+                    xaxis: {
+                        title: "High Occ"
+                    },
+                    title:'High Occupancy over time'
+                };
+                Plotly.newPlot("chiSqGraph_{{i}}", data,layout);
+            {% endfor %}
 
             </script>
 	{% else %}

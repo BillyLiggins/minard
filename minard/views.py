@@ -434,9 +434,11 @@ def nhit():
 def rathome():
     return render_template('rathome.html', runs=nlrat.available_runs())
 
+@app.route('/css/')
 @app.route('/css')
 def csshome():
-    return render_template('csshome.html',results = css.Summary())
+    lookback = request.args.get('lookback',10,type=int)
+    return render_template('csshome.html',results = css.Summary(lookback))
 
 @app.route('/css/<int:chan>')
 def cssChannel(chan):
