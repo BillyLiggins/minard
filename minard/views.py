@@ -436,7 +436,7 @@ def rathome():
 
 @app.route('/css')
 def csshome():
-    return render_template('csshome.html')
+    return render_template('csshome.html',results = css.Summary())
 
 @app.route('/css/<int:chan>')
 def cssChannel(chan):
