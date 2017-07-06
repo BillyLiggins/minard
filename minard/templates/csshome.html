@@ -29,4 +29,79 @@
         </div>
     </div>
 </div>
+
+<div class="container">
+    {% if results.current_chs_status %}
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Error: "channel failed channel hardware status check" {{ results.current_chs_status }}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-6" id='highOcc'>
+            </div>
+            <div class="col-md-6" id='highOcc_1'></div>
+        </div>
+        <div class="row">
+            <div class = "col-md-12">
+                <div id="myDiv"></div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+<div class="col-md-6">
+    <table id="chiTable" class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th>Channel</th>
+                <th>ChiSquared</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in range( results.topChiSqChan|length ) %}
+            <tr>
+                <td id=\"chiSq_{{i}}\"><a href="{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}">{{results.topChiSqChan[i]}}</a></td>
+                <td id=\"chiSqVal_{{i}}\"><a href="{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}">{{results.topChiSqValues[i]}}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="col-md-6">
+    <table id="gradTable" class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th>Channel</th>
+                <th>Gradient</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in range( results.topGradChan|length ) %}
+            <tr>
+                <td id=\"grad_{{i}}\"><a href="{{ url_for('cssChannel', chan= results.topGradChan[i] ) }}">{{ results.topGradChan[i]}}</a></td>
+                <td id=\"gradVal_{{i}}\"><a href="{{ url_for('cssChannel', chan=  results.topGradChan[i] ) }}">{{results.topGradValues [i]}}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block script %}
+        {% if not results.current_chs_status %}
+            <script src="{{ url_for('static', filename='js/d3.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/metricsgraphics.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/mg_line_brushing.js') }}"></script>
+            <script src="{{ url_for('static', filename='plotly/plotly-latest.min.js') }}"></script>
+
+            <script>
+                
+                {# {% for i in range( results.topChiSqChan|length ) %} #}
+                {#     document.getElementById("chiSq_{{i|string}}").outerHTML =  "<td id=\"chiSq_{{i}}\"><a href=\"{{ url_for('cssChannel', chan= results.topChiSqChan[i] ) }}\">{{results.topChiSqChan[results.topChiSqChan|length-1 - i]}}</a></td>"; #}
+                {#  #}
+                {# {% endfor %} #}
+
+            </script>
+	{% else %}
+	{% endif %}
 {% endblock %}

@@ -19,6 +19,15 @@ RUN_TYPES = {
     8:"Supernova",
     }
 
+class Summary:
+    """docstring for Summary"""
+    def __init__(self):
+        self.topChiSqChan =GetChiSqChans()
+        self.topChiSqValues = GetChiSqValues()
+        self.topGradChan = GetGradChans()
+        self.topGradValues = GetGradValues()
+        
+
 class Data:
     '''Class to hold css info
     '''
@@ -45,6 +54,18 @@ def getRunRange(lookback_):
 def getChannelData(varible_, chan_,lookback_):
     print '{}_{}'.format(varible_,chan_)
     return redis.lrange('{}_{}'.format(varible_,chan_),-lookback_,-1)
+
+def GetChiSqChans():
+    return redis.lrange('CSS_NEARLINE_ChiSquaredChannelRejected',0,-1)
+
+def GetChiSqValues():
+    return redis.lrange('CSS_NEARLINE_ChiSquaredRejected',0,-1)
+
+def GetGradChans():
+    return redis.lrange('CSS_NEARLINE_GradChannelRejected',0,-1)
+
+def GetGradValues():
+    return redis.lrange('CSS_NEARLINE_GradRejected',0,-1)
 
 def extract_run_type(run_word):
     '''Get the run type from the run word using RUN_TYPES

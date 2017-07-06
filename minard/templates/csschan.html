@@ -89,7 +89,10 @@
                 <div class="col-md-6" id='highOcc_1'></div>
             </div>
             <div class="row">
-                <div class = "col-md-12">
+                <div class = "col-md-6">
+                    <div id="hist"></div>
+                </div>
+                <div class = "col-md-6">
                     <div id="myDiv"></div>
                 </div>
             </div>
@@ -121,10 +124,8 @@
                         'highOcc': highOcc[i],
                         'highOccError_high': highOcc[i]+highOccError[i],
                         'highOccError_low': highOcc[i]-highOccError[i]
-                        {# 'highOccError': highOccError[i] #}
                     });
                 }
-
 
 
                 MG.data_graphic({
@@ -143,22 +144,64 @@
                     {# ,x_rug: true #}
                 });
 
-                MG.data_graphic({
-                    title: "High Occupancy",
-                    description: "High Occupancy on channel",
-                    data: dataFrame,
-                    least_squares: true,
-                    chart_type: 'point',
-                    width:$('#highOcc_1').width(),
-                    height:250,
-                    left: 100,
-                    target: '#highOcc_1',
-                    x_accessor: 'runs',
-                    y_accessor: 'highOcc',
-                    x_label: 'run',
-                    y_label: 'High Occ',
-                    {# show_confidence_band: ['highOccError_low', 'highOccError_high'], #}
-                });
+                {# alert(runs); #}
+
+                var data = [
+                    {
+                        x: runs,
+                        y: highOcc,
+                        error_y: {
+                            type: 'data',
+                            array: highOccError,
+                            visible: true,
+                            thickness: 0.5,
+                            width:0
+                        },
+                        mode: 'markers',
+                        type: 'scatter'
+                    }
+                ];
+
+                var layout = {
+                    xaxis: {
+                        title: "Run Number"
+                    },
+                    yaxis: {
+                        title: "High Occ"
+                    },
+                    title:'High Occupancy over time'
+                };
+                Plotly.newPlot('myDiv', data,layout);
+
+
+                var binnedData= [
+                    {
+                        y: highOcc,
+                        type: 'histogram',
+                        opacity: 0.5,
+                        marker: {
+                            color: 'pink',
+                        },
+                    }
+                ];
+                Plotly.newPlot('hist',binnedData);
+
+                {# MG.data_graphic({ #}
+                {#     title: "High Occupancy", #}
+                {#     description: "High Occupancy on channel", #}
+                {#     data: dataFrame, #}
+                {#     least_squares: true, #}
+                {#     chart_type: 'point', #}
+                {#     width:$('#highOcc_1').width(), #}
+                {#     height:250, #}
+                {#     left: 100, #}
+                {#     target: '#highOcc_1', #}
+                {#     x_accessor: 'runs', #}
+                {#     y_accessor: 'highOcc', #}
+                {#     x_label: 'run', #}
+                {#     y_label: 'High Occ', #}
+                {#     show_confidence_band: ['highOccError_low', 'highOccError_high'], #}
+                {# }); #}
 
                 window.onload = function(){
                     var arr = window.location.href.split("/");
