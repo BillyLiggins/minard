@@ -437,7 +437,7 @@ def rathome():
 @app.route('/css/')
 @app.route('/css')
 def csshome():
-    lookback = request.args.get('lookback',10,type=int)
+    lookback = request.args.get('lookback',30,type=int)
     return render_template('csshome.html',results = css.Summary(lookback))
 
 @app.route('/css/<int:chan>')

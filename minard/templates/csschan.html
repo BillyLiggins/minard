@@ -160,15 +160,15 @@
                     }
                 ];
                 var layout = {
-                    xaxis: {
-                        title: "High Occ"
-                    },
                     yaxis: {
                         title: "Run Number"
                     },
+                    xaxis: {
+                        title: "High Occ"
+                    },
                     title:'High Occ values taken'
                 };
-                Plotly.newPlot('hist',binnedData,layout);
+                Plotly.newPlot('hist',binnedData);
 
                 window.onload = function(){
                     var arr = window.location.href.split("/");
