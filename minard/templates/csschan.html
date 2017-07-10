@@ -72,8 +72,8 @@
                         <li><h2 style="display:inline"> Channel {{ results.chan }} </h2></li>
                         <li class="next"><a href="{{ url_for('cssChannel', chan= results.chan+1 ) }}">Next</a></li>
                     </ul>
-                    <h4> {{ results.chan }} </h4>
-                    <h4> {{ results.chan }} </h4>
+                    {# <h4>Crate: {{results.crate}}, Card: {{results.card}}, Channel: {{results.channel}}</h4> #}
+                    {# <h4> {{ results.crate}} </h4> #}
                 </center>
             </div>
         </div>
@@ -133,7 +133,8 @@
                             width:0
                         },
                         mode: 'markers',
-                        type: 'scatter'
+                        type: 'scatter',
+                        yaxis : 'y'
                     }
                 ];
 
@@ -170,8 +171,9 @@
                 ];
                 var layout = {
                     yaxis: {
-                        title: "High Occ""
-                    }
+                        title: "High Occ",
+                        anchor:'y'
+                    },
                     {# , #}
                     {# xaxis: { #}
                     {#     title: "High Occ" #}
@@ -188,10 +190,12 @@
                     var leftover = (currentLCN-512*crate)
                     var slot = parseInt((leftover-leftover%16)/32);
                     var channel= (currentLCN-32*slot-512*crate);
-
                     document.getElementById("crate").value = crate;
                     document.getElementById("slot").value = slot;
                     document.getElementById("channel").value = channel;
+                    {# document.getElementById("crate").value = {{ results.crate }}; #}
+                    {# document.getElementById("slot").value = {{ results.card }}; #}
+                    {# document.getElementById("channel").value = {{ results.channel }}; #}
                 }
 
 
@@ -220,17 +224,17 @@
                     {# alert(window.location.href.split("?")[0]) #}
                     window.location.assign(window.location.href.split("?")[0]+"?lookback=" + this.value );
                     {# window.location.reload(); #}
-                    var arr = window.location.href.split("/");
-                    var currentLCN =arr[arr.length-1];
-
-                    var crate = parseInt((currentLCN-currentLCN%18)/512);
-                    var leftover = (currentLCN-512*crate)
-                    var slot = parseInt((leftover-leftover%16)/32);
-                    var channel= (currentLCN-32*slot-512*crate);
-
-                    document.getElementById("crate").value = crate;
-                    document.getElementById("slot").value = slot;
-                    document.getElementById("channel").value = channel;
+                    {# var arr = window.location.href.split("/"); #}
+                    {# var currentLCN =arr[arr.length-1]; #}
+                    {#  #}
+                    {# var crate = parseInt((currentLCN-currentLCN%18)/512); #}
+                    {# var leftover = (currentLCN-512*crate) #}
+                    {# var slot = parseInt((leftover-leftover%16)/32); #}
+                    {# var channel= (currentLCN-32*slot-512*crate); #}
+                    {#  #}
+                    {# document.getElementById("crate").value = crate; #}
+                    {# document.getElementById("slot").value = slot; #}
+                    {# document.getElementById("channel").value = channel; #}
                 });
 
                 // When the user clicks on <div>, open the popup

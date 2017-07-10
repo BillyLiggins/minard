@@ -50,6 +50,7 @@ class Data:
         :param str time:
         '''
         self.chan = chan_
+        self.crate, self.card, self.channel = GetCCC(chan_)
         self.lookback = lookback_
         self.chs_status = getChannelData("chs_status",chan_,lookback_)
         print "current_chs_status = ",self.chs_status[-1]
@@ -60,6 +61,14 @@ class Data:
         self.runs = getRunRange(lookback_)
          
 
+def GetCCC(lcn_):
+    working = lcn_
+    crate = working/512
+    working = working%512
+    card = working/32
+    working = working%32
+    channel = working
+    return [crate,card,channel]
 
 def getRunRange(lookback_):
     return redis.lrange('CSS_NEARLINE_run_number',-lookback_,-1)
