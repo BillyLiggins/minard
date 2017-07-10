@@ -146,7 +146,16 @@
                     },
                     title:'High Occupancy over time'
                 };
-                Plotly.newPlot('myDiv', data,layout);
+
+                var options = {
+                    scrollZoom: true, // lets us scroll to zoom in and out - works
+                    showLink: false, // removes the link to edit on plotly - works
+                    modeBarButtonsToRemove: ['toImage', 'zoom2d', 'pan', 'pan2d', 'autoScale2d'],
+                    //modeBarButtonsToAdd: ['lasso2d'],
+                    displayLogo: false, // this one also seems to not work
+                    displayModeBar: false, //this one does work
+                };
+                Plotly.newPlot('myDiv', data,layout,options );
 
 
                 var binnedData= [
@@ -161,14 +170,15 @@
                 ];
                 var layout = {
                     yaxis: {
-                        title: "Run Number"
-                    },
-                    xaxis: {
-                        title: "High Occ"
-                    },
+                        title: "High Occ""
+                    }
+                    {# , #}
+                    {# xaxis: { #}
+                    {#     title: "High Occ" #}
+                    {# }, #}
                     title:'High Occ values taken'
                 };
-                Plotly.newPlot('hist',binnedData);
+                Plotly.newPlot('hist',binnedData,layout,options);
 
                 window.onload = function(){
                     var arr = window.location.href.split("/");
