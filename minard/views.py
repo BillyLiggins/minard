@@ -437,14 +437,14 @@ def rathome():
 @app.route('/css/')
 @app.route('/css')
 def csshome():
-    lookback = request.args.get('lookback',30,type=int)
+    lookback = request.args.get('lookback',100,type=int)
     return render_template('csshome.html',results = css.Summary(lookback))
 
 @app.route('/css/<int:chan>')
 def cssChannel(chan):
     # if not request.args.get('lookback'):
     #     return redirect(url_for('cssChannel',chan=chan,lookback=10))
-    lookback = request.args.get('lookback',10,type=int)
+    lookback = request.args.get('lookback',100,type=int)
     # print lookback
     return render_template('csschan.html', results = css.Data(chan,lookback))
 
